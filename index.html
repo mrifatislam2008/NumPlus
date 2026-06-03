@@ -1,1 +1,83 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Number Formatter Pro</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Number Formatter Pro</h1>
+
+<input type="file" id="fileInput">
+
+<div class="btn-group">
+<button onclick="pasteClipboard()">📋 Paste</button>
+<button onclick="addPrefix()">➕ Add +</button>
+<button onclick="removeDuplicates()">🗑 Remove Duplicates</button>
+</div>
+
+<textarea
+id="inputBox"
+placeholder="Paste numbers here..."
+></textarea>
+
+<div class="stats">
+Total Output Numbers:
+<span id="count">0</span>
+</div>
+
+<textarea
+id="outputBox"
+readonly
+placeholder="Output..."
+></textarea>
+
+<div class="btn-group">
+<button onclick="copyOutput()">📄 Copy Output</button>
+<button onclick="downloadTXT()">TXT</button>
+<button onclick="downloadCSV()">CSV</button>
+<button onclick="downloadJSON()">JSON</button>
+<button onclick="downloadXLSX()">XLSX</button>
+</div>
+
+</div>
+
+<div class="card developer">
+
+<img src="developer.jpg">
+
+<h2>Md Rifat Islam</h2>
+
+<p>
+Professional Number Formatting Tool
+with XLSX Support.
+</p>
+
+<a
+class="telegram"
+href="https://t.me/YOUR_USERNAME"
+target="_blank">
+Telegram Contact
+</a>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
