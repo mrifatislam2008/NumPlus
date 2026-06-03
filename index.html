@@ -3,81 +3,436 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Number Formatter Pro</title>
-
-<link rel="stylesheet" href="style.css">
+<title>Plus Generator Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0d1117;
+padding:15px;
+color:#fff;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+font-size:28px;
+background:linear-gradient(90deg,#2196f3,#ff4d4d);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+textarea{
+width:100%;
+height:250px;
+background:#161b22;
+border:none;
+outline:none;
+color:#fff;
+padding:15px;
+border-radius:10px;
+resize:none;
+font-size:15px;
+margin-bottom:15px;
+}
+
+.buttons{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:15px;
+}
+
+button,
+label,
+select{
+padding:12px 18px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+#pasteBtn{
+background:#2196f3;
+color:white;
+}
+
+#importBtn{
+background:#ff4d4d;
+color:white;
+}
+
+#copyBtn{
+background:#ff9800;
+color:white;
+}
+
+#downloadBtn{
+background:#00c853;
+color:white;
+}
+
+select{
+background:#222;
+color:white;
+}
+
+button:hover,
+label:hover{
+opacity:.9;
+}
+
+input[type=file]{
+display:none;
+}
+
+.counter{
+margin-bottom:15px;
+color:#00e676;
+font-weight:bold;
+}
+
+.footer{
+text-align:center;
+margin-top:20px;
+color:#999;
+}
+</style>
 </head>
-
 <body>
-
-<canvas id="matrix"></canvas>
 
 <div class="container">
 
-<div class="card">
+<h1>➕ PLUS GENERATOR PRO</h1>
 
-<h1>Number Formatter Pro</h1>
+<div class="buttons">
 
-<input type="file" id="fileInput">
+<button id="pasteBtn">📋 Paste</button>
 
-<div class="btn-group">
-<button onclick="pasteClipboard()">📋 Paste</button>
-<button onclick="addPrefix()">➕ Add +</button>
-<button onclick="removeDuplicates()">🗑 Remove Duplicates</button>
+<label id="importBtn" for="fileInput">
+📂 Import File
+</label>
+
+<input type="file"
+id="fileInput"
+accept=".txt,.json,.xlsx">
+
 </div>
 
 <textarea
-id="inputBox"
-placeholder="Paste numbers here..."
-></textarea>
+id="inputText"
+placeholder="Paste or Import Data Here"></textarea>
 
-<div class="stats">
-Total Output Numbers:
-<span id="count">0</span>
+<div class="counter">
+Total Lines:
+<span id="lineCount">0</span>
 </div>
 
 <textarea
-id="outputBox"
+id="outputText"
 readonly
-placeholder="Output..."
-></textarea>
+placeholder="Output Here"></textarea>
 
-<div class="btn-group">
-<button onclick="copyOutput()">📄 Copy Output</button>
-<button onclick="downloadTXT()">TXT</button>
-<button onclick="downloadCSV()">CSV</button>
-<button onclick="downloadJSON()">JSON</button>
-<button onclick="downloadXLSX()">XLSX</button>
+<div class="buttons">
+
+<button id="copyBtn">
+📄 Copy Output
+</button>
+
+<select id="format">
+<option value="txt">TXT</option>
+<option value="json">JSON</option>
+<option value="xlsx">XLSX</option>
+</select>
+
+<button id="downloadBtn">
+⬇ Download
+</button>
+
+</div>
+
+<div class="footer">
+Made With HTML CSS & JavaScript
 </div>
 
 </div>
 
-<div class="card developer">
+<script>
 
-<img src="developer.jpg">
+const input =
+document.getElementById("inputText");
 
-<h2>Md Rifat Islam</h2>
+const output =
+document.getElementById("outputText");
 
-<p>
-Professional Number Formatting Tool
-with XLSX Support.
-</p>
+const lineCount =
+document.getElementById("lineCount");
 
-<a
-class="telegram"
-href="https://t.me/YOUR_USERNAME"
-target="_blank">
-Telegram Contact
-</a>
+function processText(){
 
-</div>
+const lines = input.value
+.split(/\r?\n/)
+.map(v=>v.trim())
+.filter(v=>v !== "");
 
-</div>
+const result = lines.map(v=>{
 
-<script src="app.js"></script>
+if(v.startsWith("+"))
+return v;
+
+return "+" + v;
+
+});
+
+output.value =
+result.join("\n");
+
+lineCount.textContent =
+result.length;
+
+}
+
+input.addEventListener(
+"input",
+processText
+);
+
+document
+.getElementById("pasteBtn")
+.addEventListener("click",
+async ()=>{
+
+try{
+
+const text =
+await navigator.clipboard.readText();
+
+input.value = text;
+
+processText();
+
+}
+catch{
+
+alert(
+"Browser blocked clipboard access.\n\nLong press Input Box and Paste manually."
+);
+
+}
+
+});
+
+document
+.getElementById("copyBtn")
+.addEventListener("click",
+()=>{
+
+navigator.clipboard
+.writeText(output.value);
+
+alert("Copied Successfully");
+
+});
+
+document
+.getElementById("downloadBtn")
+.addEventListener("click",
+()=>{
+
+const format =
+document.getElementById("format").value;
+
+const data =
+output.value;
+
+if(format==="txt"){
+
+const blob =
+new Blob(
+[data],
+{type:"text/plain"}
+);
+
+saveFile(
+blob,
+"output.txt"
+);
+
+}
+
+else if(format==="json"){
+
+const blob =
+new Blob(
+[
+JSON.stringify(
+data.split("\n"),
+null,
+2
+)
+],
+{
+type:"application/json"
+}
+);
+
+saveFile(
+blob,
+"output.json"
+);
+
+}
+
+else if(format==="xlsx"){
+
+const wb =
+XLSX.utils.book_new();
+
+const ws =
+XLSX.utils.aoa_to_sheet(
+data
+.split("\n")
+.map(v=>[v])
+);
+
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+"Output"
+);
+
+XLSX.writeFile(
+wb,
+"output.xlsx"
+);
+
+}
+
+});
+
+function saveFile(
+blob,
+filename
+){
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download =
+filename;
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+}
+
+document
+.getElementById("fileInput")
+.addEventListener(
+"change",
+function(e){
+
+const file =
+e.target.files[0];
+
+if(!file) return;
+
+const ext =
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
+if(
+ext==="txt" ||
+ext==="json"
+){
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(ev){
+
+input.value =
+ev.target.result;
+
+processText();
+
+};
+
+reader.readAsText(file);
+
+}
+
+else if(
+ext==="xlsx"
+){
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(ev){
+
+const data =
+new Uint8Array(
+ev.target.result
+);
+
+const wb =
+XLSX.read(
+data,
+{
+type:"array"
+}
+);
+
+const sheet =
+wb.Sheets[
+wb.SheetNames[0]
+];
+
+const csv =
+XLSX.utils
+.sheet_to_csv(
+sheet
+);
+
+input.value =
+csv;
+
+processText();
+
+};
+
+reader.readAsArrayBuffer(file);
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
